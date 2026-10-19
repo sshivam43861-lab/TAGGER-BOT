@@ -216,7 +216,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
             InlineKeyboardButton(
                 "👑 𝐎ᴡɴᴇʀ",
-                url=f"tg://user?id={OWNER_ID}",
+                url="https://t.me/deadlock93",
             ),
         ],
     ]
