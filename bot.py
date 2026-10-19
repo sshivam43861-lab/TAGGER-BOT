@@ -1,6 +1,9 @@
 import asyncio
 import html
 import logging
+import os
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import random
 import re
 import time
@@ -614,6 +617,20 @@ async def post_init(application):
     logger.info("%s started successfully", BOT_NAME)
 
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Tagger Bot is alive!")
+
+    def log_message(self, format, *args):
+        pass
+
+
+def start_health_server():
+    port = int(os.environ.get("PORT", "10000"))
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    server.serve_forever()
 def main():
     application = (
         Application.builder()
@@ -654,6 +671,7 @@ def main():
         group=1,
     )
 
+    threading.Thread(target=start_health_server, daemon=True).start()
     logger.info("Starting %s...", BOT_NAME)
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
